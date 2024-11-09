@@ -1,55 +1,13 @@
 <?php
-// Подключение библиотеки
-require 'phpmailer/PHPMailer.php';
-require 'phpmailer/SMTP.php';
-require 'phpmailer/Exception.php';
-
-// Получение данных
-$json = file_get_contents('php://input'); // Получение json строки
-$data = json_decode($json, true); // Преобразование json
-
-// Данные
-$name = $data['name'];
-$tel = $data['tel'];
-$msg = $data['msg'];
-
-// Контент письма
-$title = 'Заявка с сайта'; // Название письма
-$body = '<p>Имя: <strong>'.$name.'</strong></p>'.
-        '<p>Телефон: <strong>'.$tel.'</strong></p>'.
-        '<p>Сообщение: <strong>'.$msg.'</strong></p>';
-
-// Настройки PHPMailer
-$mail = new PHPMailer\PHPMailer\PHPMailer();
-
-try {
-  $mail->isSMTP();
-  $mail->CharSet = 'UTF-8';
-  $mail->SMTPAuth   = true;
-
-  // Настройки почты отправителя
-  $mail->Host       = 'smtp.yandex.com'; // SMTP сервера вашей почты
-  $mail->Username   = 'aar2103@yandex.ru'; // Логин на почте
-  $mail->Password   = 'skayoagdvepofvfo'; // Пароль на почте
-  $mail->SMTPSecure = 'ssl';
-  $mail->Port       = 465;
-
-  $mail->setFrom('aar2103@yandex.ru', 'Заявка с сайта'); // Адрес самой почты и имя отправителя
-
-  // Получатель письма
-  $mail->addAddress('prometlom@mail.ru');
-
-  // Отправка сообщения
-  $mail->isHTML(true);
-  $mail->Subject = $title;
-  $mail->Body = $body;
-
-  $mail->send('d');
-
-  // Сообщение об успешной отправке
-  echo ('Сообщение отправлено успешно!');
-
-} catch (Exception $e) {
-  header('HTTP/1.1 400 Bad Request');
-  echo('Сообщение не было отправлено! Причина ошибки: {$mail->ErrorInfo}');
-}
+$to = "prometlom@mail.ru"; // емайл получателя данных из формы
+$tema = "Форма обратной связи на PHP"; // тема полученного емайла
+$message = "Ваше имя: ".$_POST['name']."<br>";//присвоить переменной значение, полученное из формы name=name
+  $message .= "E-mail: ".$_POST['email']."<br>"; //полученное из формы name=email
+$message .= "Номер телефона: ".$_POST['phone']."<br>"; //полученное из формы name=phone
+$message .= "Сообщение: ".$_POST['message']."<br>"; //полученное из формы name=message
+$headers  = 'MIME-Version: 1.0' . "\r\n"; // заголовок соответствует формату плюс символ перевода строки
+  $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n"; // указывает на тип посылаемого контента
+mail($to, $tema, $message, $headers); //отправляет получателю на емайл значения переменных
+header("Location:index.html"); 
+exit();
+?>
